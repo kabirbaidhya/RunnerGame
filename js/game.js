@@ -8,22 +8,62 @@
     var score = 0;
     var homeState = {
         preload: function () {
+            game.load.audio('mainmenu', ['assets/main-menu.mp3', 'assets/main-menu.ogg']);
         },
         create: function () {
             var button1 = game.add.text(game.world.centerX, game.world.centerY, 'Play', {
                 fill: '#fff'
             });
             button1.anchor.setTo(0.5, 0.5);
+            var music = game.add.audio('mainmenu');
+            music.play();
             button1.inputEnabled = true;
             button1.events.onInputDown.add(function () {
                 game.state.start('playstate');
+                music.stop();
             }, this);
+
         },
         update: function () {
 
 
         }
     };
+    var gameOverState = {
+        preload: function () {
+            game.load.audio('gameover', ['assets/winner.mp3', 'assets/winner.ogg']);
+        },
+        create: function () {
+            var gameOverText = game.add.text(game.world.centerX, game.world.centerY, 'Game Over', {
+                fill: '#fff'});
+            gameOverText.anchor.setTo(0.5, 0.5);
+            var mainMenuButton = game.add.text(game.world.centerX, game.world.centerY + 160,'Main Menu', {
+                fill: '#fff'});
+            mainMenuButton.anchor.setTo(0.5, 0.5);
+            var yourScoreText = game.add.text(game.world.centerX, game.world.centerY - 60, 'Your Score:', {
+                fill: '#fff'
+            });
+            yourScoreText.anchor.setTo(0.5, 0.5);
+            var yourScore = game.add.text(game.world.centerX + 100, game.world.centerY - 60, score.toString(), {
+                fill: '#fff'
+            });
+            yourScore.anchor.setTo(0.5, 0.5);
+
+            var music = game.add.audio('gameover');
+            music.play();
+            mainMenuButton.inputEnabled = true;
+            mainMenuButton.events.onInputDown.add(function () {
+                music.stop();
+                game.state.start('homestate');
+            }, this);
+
+        },
+        update: function () {
+
+
+        }
+    };
+
     var playState = {
         preload: function () {
             game.load.image('bg', 'assets/background.jpg');
@@ -31,6 +71,8 @@
             game.load.spritesheet('skeleton', 'assets/enemy1.png', 230, 460, 8);
             game.load.spritesheet('robot', 'assets/enemy2.png', 85.6, 128, 5);
             game.load.spritesheet('dog', 'assets/enemy3.png', 100, 58, 24);
+            //  Firefox doesn't support mp3 files, so use ogg
+            game.load.audio('playing', ['assets/play.mp3', 'assets/play.ogg']);
         },
         create: function () {
             this.bg = game.add.tileSprite(0, 0, imageDim[0], imageDim[1], 'bg');
@@ -59,6 +101,10 @@
 
             this.hero = game.add.sprite(200, 407, 'hero');
             this.hero.animations.add('run', [12, 13, 14, 15, 16, 17], 6, true, true);
+            this.music = game.add.audio('playing');
+
+            this.music.play();
+
             this.hero.animations.play('run');
             game.physics.startSystem(Phaser.Physics.ARCADE);
             game.physics.arcade.enable(this.hero);
@@ -119,13 +165,15 @@
         },
         update: function() {
 
-           // this.game.physics.arcade.collide(this.hero, this.enimies, this.deathHandler, null, this);
+            this.game.physics.arcade.collide(this.hero, this.enimies, this.deathHandler, null, this);
         },
         deathHandler: function () {
-            game.state.start('homestate');
+            this.music.stop();
+            game.state.start('gameOverState');
         }
     };
     game.state.add("playstate", playState);
     game.state.add("homestate", homeState);
-    game.state.start('playstate');
+    game.state.add("gameOverState", gameOverState);
+    game.state.start('homestate');
 })();
