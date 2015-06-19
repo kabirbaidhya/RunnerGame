@@ -13,6 +13,7 @@
             game.load.spritesheet('skeleton', 'assets/enemy1.png', 305, 460, 8);
             game.load.spritesheet('robot', 'assets/enemy2.png', 85.6, 128, 5);
             game.load.spritesheet('dog', 'assets/enemy3.png', 100, 58, 24);
+            game.load.image('coin', 'assets/coin.png');
             //  Firefox doesn't support mp3 files, so use ogg
             game.load.audio('playing', ['assets/play.mp3', 'assets/play.ogg']);
             game.load.image('ground', 'assets/transplatform.png');
@@ -81,6 +82,15 @@
 
             game.time.events.loop(Phaser.Timer.SECOND * 2, this.scoreUpdate, this);
             this.makeEnemies();
+            this.makeCoins();
+        },
+        makeCoins: function () {
+            this.coinGenerator = game.time.events.loop(Phaser.Timer.SECOND * 2 + 1, this.makeCoin, this);
+            this.coinGenerator.timer.start();
+            this.coin = game.add.group();
+        },
+        makeCoin: function() {
+            game.add.tileSprite(0, 0, game.world.width/2, game.world.height/2, 'bg');
         },
         makeEnemies: function () {
             this.enemiesGenerator = game.time.events.loop(Phaser.Timer.SECOND * 2, this.makeEnemy, this);
