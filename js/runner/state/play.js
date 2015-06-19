@@ -47,7 +47,9 @@
 
             this.currentScore.anchor.setTo(0.5, 0.5);
             this.currentLevel.anchor.setTo(0.5, 0.5);
-            this.bg.autoScroll(-500, 0);
+
+            this.run();
+
             this.bg.scale.setTo(bgRatio, bgRatio);
             //this.hero.body.gravity.y = 1000;
             var upArrow = game.input.keyboard.addKey(Phaser.Keyboard.UP);
@@ -158,6 +160,27 @@
                 this.hero.jump();
             }
 
+            if (this.cursors.left.isDown) {
+                this.run('slow');
+            } else if (this.cursors.right.isDown) {
+                this.run('fast');
+            } else {
+                this.run('normal');
+            }
+
+        },
+
+        run: function (speed) {
+            var magnitude = 500;
+            var delta = 300;
+
+            if (speed === 'fast') {
+                magnitude += delta;
+            } else if (speed === 'slow') {
+                magnitude -= delta;
+            }
+
+            this.bg.autoScroll(-magnitude, 0);
         },
         deathHandler: function () {
             this.music.stop();
