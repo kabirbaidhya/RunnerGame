@@ -51,8 +51,8 @@
 
             this.platforms = game.add.physicsGroup();
 
-            var ground = this.platforms.create(0, game.world.height - 50, 'ground');
-            ground.width = game.world.width;
+            this.ground = this.platforms.create(0, game.world.height - 50, 'ground');
+            this.ground.width = game.world.width;
 
             this.platforms.setAll('body.allowGravity', false);
             this.platforms.setAll('body.immovable', true);
@@ -61,9 +61,8 @@
             this.hero = game.add.sprite(heroPos[0], heroPos[1], 'hero');
             this.hero.scale.setTo(heroScale, heroScale);
             game.physics.arcade.enable(this.hero);
-            //this.hero.body.gravity.y = 800;
             this.hero.body.collideWorldBounds = true;
-            //this.hero.body.setSize(20, 32, 5, 16);
+            //this.hero.body.allowGravity = false;
 
             this.hero.animations.add('run', [12, 13, 14, 15, 16, 17], 8, true, true);
             this.hero.animations.play('run');
@@ -72,9 +71,6 @@
             };
 
             this.cursors = this.input.keyboard.createCursorKeys();
-
-            //var upArrow = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-            //upArrow.onDown.add(this.);
 
             game.time.events.loop(Phaser.Timer.SECOND * 2, this.scoreUpdate, this);
             this.makeEnemies();
@@ -114,6 +110,7 @@
 
             //this.enimies.add(enemy);
             enemy.body.velocity.x = -200;
+
             //this.enimies.setAll('body.velocity.x',-200);
         },
         scoreUpdate: function () {
@@ -126,11 +123,14 @@
         },
         update: function () {
 
+            // hold the hero and the enemies
             this.physics.arcade.collide(this.hero, this.platforms, null, null, this);
-            //this.physics.arcade.collide(this.enemies, this.platforms, null, null, this);
             this.physics.arcade.collide(this.enimies, this.platforms, null, null, this);
 
-            if (this.cursors.up.isDown) {
+            // only if the hero is on top of the group
+            var onTheGround = (this.hero.bottom === this.ground.top);
+
+            if (this.cursors.up.isDown && onTheGround) {
                 this.hero.jump();
             }
 

@@ -4,7 +4,7 @@
         containerDimension: [1200, 600],
         bgImageDimension: [3000, 1500],
         hero: {
-            position: [200, 236],
+            position: [200, 436],
             scaleFactor: 0.8
         },
         getRatio: function () {
