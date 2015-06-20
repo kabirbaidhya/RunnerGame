@@ -160,13 +160,12 @@
         update: function () {
             // hold the hero and the enemies
             this.physics.arcade.collide(this.hero.object, this.platforms, null, null, this);
+            this.physics.arcade.collide(this.hero.object, this.asteroids.group, this.deathHandler, null, this);
             this.physics.arcade.collide(this.enimies, this.platforms, null, null, this);
+
             //this.physics.arcade.collide(this.asteroids.group, this.platforms, null, null, this);
-
-
             this.physics.arcade.collide(this.enimies, this.hero.object, this.deathHandler, null, this);
             this.physics.arcade.collide(this.coin, this.hero.object, this.removeCoin, null, this);
-
             this.physics.arcade.collide(this.fire, this.enimies, this.removeEnemy, null, this);
             this.asteroids.setPhysics(this.physics);
             this.asteroids.checkCollision();

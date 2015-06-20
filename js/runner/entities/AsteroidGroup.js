@@ -4,9 +4,38 @@
 
         var physics;
         var game = runner.game;
-
         var colliders = [];
-        game.load.spritesheet('asteroids', 'assets/asteroids.png', 64, 64, 1);
+        game.load.spritesheet('asteroids', 'assets/asteroids.png', 64, 64);
+
+        var fallAsteroid = function () {
+
+            // starting position of the asteroid
+            var pos = {
+                x: game.rnd.integerInRange(0, game.world.width - 64),
+                y: -100
+            };
+
+            var sprite = game.rnd.integerInRange(1, 16);
+            var asteroid = this.group.create(pos.x, pos.y, 'asteroids', sprite);
+
+            // direction of asteroid
+            var dx = +1;
+            if (pos.x > (game.world.width / 2)) {
+                dx = -1;
+            }
+
+            // horizontal velocity of the asteroid
+            asteroid.body.velocity.x = dx * game.rnd.integerInRange(1, 5) * 100;
+
+            asteroid.collideWorldBounds = true;
+            // just to make the collisions look closer
+            asteroid.body.height = 50;
+            asteroid.body.width = 50;
+        };
+
+        function collision(asteroid) {
+            //asteroid.destroy();
+        }
 
         this.setPhysics = function (physicsObject) {
             physics = physicsObject;
@@ -16,25 +45,14 @@
             this.group = game.add.physicsGroup();
         };
 
+
         this.startFalling = function () {
 
-            var asteroid = this.group.create(100, -100, 'asteroids', 1);
-
-            asteroid.body.velocity.y = 1000;
-            asteroid.collideWorldBounds = true;
-            //this.group.setAll('collideWorldBounds', true);
-
-            // just to make the collisions look closer
-            asteroid.body.height = 50;
-            asteroid.body.width = 50;
+            var asteroidGenerator = game.time.events.loop(Phaser.Timer.SECOND * game.rnd.integerInRange(3, 8), fallAsteroid, this);
+            asteroidGenerator.timer.start();
         };
 
         this.checkCollision = function () {
-
-            function collision(asteroid) {
-                //console.log('collided', c);
-                asteroid.destroy();
-            }
 
             var group = this.group;
             colliders.forEach(function (collider) {
