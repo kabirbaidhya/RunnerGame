@@ -11,7 +11,7 @@
         preload: function () {
             game.load.image('bg', 'assets/background.jpg');
             game.load.spritesheet('hero', 'assets/hero.png', 144, 144, 18);
-            game.load.spritesheet('skeleton', 'assets/enemy1.png', 305, 460, 8);
+            //game.load.spritesheet('skeleton', 'assets/enemy1.png', 305, 460, 8);
             game.load.spritesheet('robot', 'assets/enemy2.png', 85.6, 128, 5);
             game.load.spritesheet('dog', 'assets/enemy3.png', 100, 58, 24);
             game.load.image('coin', 'assets/coin.png');
@@ -25,7 +25,7 @@
             this.game.renderer.renderSession.roundPixels = true;
             game.physics.startSystem(Phaser.Physics.ARCADE);
             this.physics.arcade.skipQuadTree = false;
-            this.physics.arcade.gravity.y = 750;
+            this.physics.arcade.gravity.y = 1000;
             this.bg = game.add.tileSprite(0, 0, imageDim[0], imageDim[1], 'bg');
 
             // Level text display
@@ -60,22 +60,19 @@
 
             this.platforms.setAll('body.allowGravity', false);
             this.platforms.setAll('body.immovable', true);
-            //this.platforms.setAll('body.velocity.x', 100);
 
             this.hero = game.add.sprite(heroPos[0], heroPos[1], 'hero');
             this.hero.scale.setTo(heroScale, heroScale);
             game.physics.arcade.enable(this.hero);
             this.hero.body.collideWorldBounds = true;
-            //this.hero.body.allowGravity = false;
 
-            this.hero.animations.add('run', [12, 13, 14, 15, 16, 17], 7, true, true);
+            this.hero.animations.add('run', [12, 13, 14, 15, 16, 17], 6.5, true, true);
             this.hero.animations.add('run-slow', [12, 13, 14, 15, 16, 17], 5, true, true);
-            this.hero.animations.add('run-fast', [12, 13, 14, 15, 16, 17], 9, true, true);
+            this.hero.animations.add('run-fast', [12, 13, 14, 15, 16, 17], 10, true, true);
 
             this.music = game.add.audio('playing');
             this.music.loop = true;
             this.music.play();
-            //this.hero.animations.play('run');
             this.run();
 
             this.hero.jump = function () {
@@ -84,8 +81,8 @@
 
             this.cursors = this.input.keyboard.createCursorKeys();
             game.time.events.loop(Phaser.Timer.SECOND * 2, this.scoreUpdate, this);
-            //this.makeCoins();
-            //this.makeEnemies();
+            this.makeCoins();
+            this.makeEnemies();
         },
         makeCoins: function () {
             this.coinGenerator = game.time.events.loop(Phaser.Timer.SECOND * game.rnd.integerInRange(3, 8), this.makeCoin, this);
@@ -114,7 +111,7 @@
                 enemy.animations.play('run');
             }
             else if (enemyType == 2) {
-                enemy = game.add.sprite(1175, 435, 'skeleton');
+                enemy = game.add.sprite(1175, 435, 'dog');
                 enemy.scale.setTo(0.3, 0.3);
                 enemy.animations.add('run', [0, 1, 2, 3], 4, true, true);
                 enemy.animations.play('run');
@@ -129,7 +126,7 @@
             this.enimies.add(enemy);
 
             //this.enimies.add(enemy);
-            enemy.body.velocity.x = -200;
+            enemy.body.velocity.x = -400;
             //this.enimies.setAll('body.velocity.x',-200);
         },
 
@@ -140,13 +137,6 @@
             game.physics.arcade.enable(this.fire);
             this.fire.body.velocity.x = 300;
             this.fire.allowGravity = false;
-        },
-        jump: function () {
-            var jumps = game.add.tween(this.hero);
-            jumps.to({y: this.hero.height - 60}, 6000, Phaser.Easing.Bounce.In);
-            jumps.onComplete.add(jumps, this);
-            jumps.start();
-            //this.enimies.setAll('body.velocity.x',-200);
         },
         scoreUpdate: function () {
             runner.score += 5 * runner.level;
@@ -160,7 +150,7 @@
             // hold the hero and the enemies
             this.physics.arcade.collide(this.hero, this.platforms, null, null, this);
             this.physics.arcade.collide(this.enimies, this.platforms, null, null, this);
-            // this.physics.arcade.collide(this.enimies, this.hero, this.deathHandler, null, this);
+            this.physics.arcade.collide(this.enimies, this.hero, this.deathHandler, null, this);
 
             this.physics.arcade.collide(this.coin, this.hero, this.removeCoin, null, this);
             this.physics.arcade.collide(this.fire, this.enimies, this.removeEnemy, null, this);
@@ -197,15 +187,15 @@
             if (speed === 'fast') {
                 magnitude += delta;
                 this.hero.animations.play('run-fast');
-                this.enimies.setAll('body.velocity.x', -500);
+                this.enimies.setAll('body.velocity.x', -700);
             } else if (speed === 'slow') {
                 magnitude -= delta;
                 this.hero.animations.play('run-slow');
-                this.enimies.setAll('body.velocity.x', -100);
+                this.enimies.setAll('body.velocity.x', -300);
             } else {
                 this.hero.animations.play('run');
                 if (this.enimies) {
-                    this.enimies.setAll('body.velocity.x', -200);
+                    this.enimies.setAll('body.velocity.x', -400);
                 }
             }
 
@@ -213,7 +203,7 @@
         },
         deathHandler: function () {
             this.music.stop();
-            game.state.start('homestate');
+            game.state.start('gameOverState');
         }
     };
 })();
