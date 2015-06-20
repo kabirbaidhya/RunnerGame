@@ -67,6 +67,7 @@
 
             this.hero.create();
             this.asteroids.create();
+            this.asteroids.addCollider(this.platforms);
 
             this.music = game.add.audio('playing');
             this.music.loop = true;
@@ -77,6 +78,8 @@
             game.time.events.loop(Phaser.Timer.SECOND * 2, this.scoreUpdate, this);
             this.makeCoins();
             this.makeEnemies();
+
+            this.asteroids.startFalling();
         },
         makeCoins: function () {
             this.coinGenerator = game.time.events.loop(Phaser.Timer.SECOND * game.rnd.integerInRange(3, 8), this.makeCoin, this);
@@ -111,15 +114,14 @@
                 enemy.animations.play('run', 20, true);
             }
             else {
-                //enemy = game.add.sprite(1175, 420, 'robot');
-                //enemy.animations.add('run', [0, 1, 2, 3, 4], 8, true, true);
-                //enemy.animations.play('run', 44, true);
 
-                enemy = game.add.sprite(1175, 410, 'ufo');
+                enemy = game.add.sprite(1175, 412, 'ufo');
                 this.physics.arcade.enable(enemy);
                 enemy.body.allowGravity = false;
+                console.log(enemy.angle);
                 enemy.animations.add('fly');
                 enemy.animations.play('fly');
+                game.time.events.loop(Phaser.Timer.SECOND * 0.15, this.tiltUfo, this).timer.start();
 
             }
             game.physics.arcade.enable(enemy);
@@ -130,7 +132,15 @@
             enemy.body.velocity.x = -400;
             //this.enimies.setAll('body.velocity.x',-200);
         },
-
+        tiltUfo: function () {
+            this.enimies.forEach(function (enemy) {
+                var delta = 4;
+                if (enemy.key === 'ufo') {
+                    enemy.angle = (enemy.angle == delta ? -delta : delta);
+                }
+            });
+            //console.log('tilt', this.enimies);
+        },
         shoot: function () {
             this.fire = game.add.sprite(300, 420, 'fire');
             this.fire.animations.add('run');
@@ -151,12 +161,15 @@
             // hold the hero and the enemies
             this.physics.arcade.collide(this.hero.object, this.platforms, null, null, this);
             this.physics.arcade.collide(this.enimies, this.platforms, null, null, this);
-            this.physics.arcade.collide(this.asteroids.group, this.platforms, null, null, this);
+            //this.physics.arcade.collide(this.asteroids.group, this.platforms, null, null, this);
+
 
             this.physics.arcade.collide(this.enimies, this.hero.object, this.deathHandler, null, this);
             this.physics.arcade.collide(this.coin, this.hero.object, this.removeCoin, null, this);
 
             this.physics.arcade.collide(this.fire, this.enimies, this.removeEnemy, null, this);
+            this.asteroids.setPhysics(this.physics);
+            this.asteroids.checkCollision();
 
             // only if the hero is on top of the group
             if (this.cursors.up.isDown && this.hero.isOnGround(this.ground)) {

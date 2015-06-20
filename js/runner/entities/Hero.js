@@ -19,6 +19,9 @@
             this.object.animations.add('run', [12, 13, 14, 15, 16, 17], 6.5, true, true);
             this.object.animations.add('run-slow', [12, 13, 14, 15, 16, 17], 5, true, true);
             this.object.animations.add('run-fast', [12, 13, 14, 15, 16, 17], 10, true, true);
+
+            // just to make the collision look closer
+            this.object.body.width = 60;
         };
 
         this.playAnimation = function (name, frameRate, loop, killOnComplete) {
