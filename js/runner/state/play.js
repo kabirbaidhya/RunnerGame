@@ -103,19 +103,20 @@
             var enemyType = game.rnd.integerInRange(1, 3);
             var enemy;
             if (enemyType == 1) {
-                enemy = game.add.sprite(1175, 495, 'dog');
+                enemy = game.add.sprite(game.world.width, 495, 'dog');
                 enemy.animations.add('run', [1, 2, 9, 10, 17, 18], 8, true, true);
                 enemy.animations.play('run');
             }
             else if (enemyType == 2) {
-                enemy = game.add.sprite(1175, 435, 'mummy');
+                enemy = game.add.sprite(game.world.width, 460, 'mummy');
+                enemy.scale.setTo(1.2, 1.2);
                 enemy.animations.add('run');
                 enemy.scale.x = -1; // flip horizontally
                 enemy.animations.play('run', 20, true);
             }
             else {
 
-                enemy = game.add.sprite(1175, 412, 'ufo');
+                enemy = game.add.sprite(game.world.width, 412, 'ufo');
                 this.physics.arcade.enable(enemy);
                 enemy.body.allowGravity = false;
                 console.log(enemy.angle);

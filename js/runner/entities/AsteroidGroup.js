@@ -29,12 +29,12 @@
             }
 
             // horizontal velocity of the asteroid
-            asteroid.body.velocity.x = dx * rnd.integerInRange(1, 5) * 100;
+            asteroid.body.velocity.x = dx * rnd.integerInRange(1, 9) * 100;
 
             asteroid.collideWorldBounds = true;
             // just to make the collisions look closer
-            asteroid.body.height = 50;
-            asteroid.body.width = 50;
+            asteroid.body.height = asteroid.body.height * .8;
+            asteroid.body.width = asteroid.body.height * .8;
         };
 
         function collision(asteroid) {
