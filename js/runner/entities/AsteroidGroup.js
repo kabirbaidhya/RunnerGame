@@ -5,19 +5,23 @@
         var physics;
         var game = runner.game;
         var colliders = [];
+        var rnd = game.rnd;
+
         game.load.spritesheet('asteroids', 'assets/asteroids.png', 64, 64);
 
         var fallAsteroid = function () {
 
             // starting position of the asteroid
             var pos = {
-                x: game.rnd.integerInRange(0, game.world.width - 64),
+                x: rnd.integerInRange(0, game.world.width - 64),
                 y: -100
             };
 
-            var sprite = game.rnd.integerInRange(1, 16);
+            var sprite = rnd.integerInRange(1, 16);
             var asteroid = this.group.create(pos.x, pos.y, 'asteroids', sprite);
+            var scaleFactor = rnd.integerInRange(5, 10) * 0.1;
 
+            asteroid.scale.setTo(scaleFactor, scaleFactor);
             // direction of asteroid
             var dx = +1;
             if (pos.x > (game.world.width / 2)) {
@@ -25,7 +29,7 @@
             }
 
             // horizontal velocity of the asteroid
-            asteroid.body.velocity.x = dx * game.rnd.integerInRange(1, 5) * 100;
+            asteroid.body.velocity.x = dx * rnd.integerInRange(1, 5) * 100;
 
             asteroid.collideWorldBounds = true;
             // just to make the collisions look closer
@@ -48,7 +52,7 @@
 
         this.startFalling = function () {
 
-            var asteroidGenerator = game.time.events.loop(Phaser.Timer.SECOND * game.rnd.integerInRange(3, 8), fallAsteroid, this);
+            var asteroidGenerator = game.time.events.loop(Phaser.Timer.SECOND * rnd.integerInRange(3, 8), fallAsteroid, this);
             asteroidGenerator.timer.start();
         };
 
