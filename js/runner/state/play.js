@@ -180,6 +180,8 @@
                 this.run('slow');
             } else if (this.cursors.right.isDown) {
                 this.run('fast');
+            } else if (!this.hero.isOnGround(this.ground)) {
+                this.hero.playAnimation('jump');
             } else {
                 this.run('normal');
             }

@@ -19,7 +19,7 @@
             this.object.animations.add('run', [12, 13, 14, 15, 16, 17], 6.5, true, true);
             this.object.animations.add('run-slow', [12, 13, 14, 15, 16, 17], 5, true, true);
             this.object.animations.add('run-fast', [12, 13, 14, 15, 16, 17], 10, true, true);
-
+            this.object.animations.add('jump', [8, 9, 10, 11, 12], 4, true, true);
             // just to make the collision look closer
             this.object.body.width = 60;
         };
