@@ -3,19 +3,23 @@
     var imageDim = runner.config.bgImageDimension;
     var bgRatio = runner.config.getRatio();
     var game = runner.game;
-    var heroPos = runner.config.hero.position;
-    var heroScale = runner.config.hero.scaleFactor;
+    var Hero = runner.entities.Hero;
+    var AsteroidGroup = runner.entities.AsteroidGroup;
 
     runner.state.play = {
-        hero: null,
         preload: function () {
             game.load.image('bg', 'assets/background.jpg');
-            game.load.spritesheet('hero', 'assets/hero.png', 144, 144, 18);
+
             //game.load.spritesheet('skeleton', 'assets/enemy1.png', 305, 460, 8);
             game.load.spritesheet('robot', 'assets/enemy2.png', 85.6, 128, 5);
             game.load.spritesheet('dog', 'assets/enemy3.png', 100, 58, 24);
             game.load.image('coin', 'assets/coin.png');
+            game.load.image('ufo', 'assets/ufo.png');
             game.load.spritesheet('fire', 'assets/fire.png', 55, 55, 16);
+            game.load.spritesheet('mummy', 'assets/metalslug_mummy.png', 37, 45, 18);
+
+            this.hero = new Hero();
+            this.asteroids = new AsteroidGroup();
 
             //  Firefox doesn't support mp3 files, so use ogg
             game.load.audio('playing', ['assets/play.mp3', 'assets/play.ogg']);
@@ -50,34 +54,24 @@
             this.currentLevel.anchor.setTo(0.5, 0.5);
 
             this.bg.scale.setTo(bgRatio, bgRatio);
-            //this.hero.body.gravity.y = 1000;
             var space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             space.onDown.add(this.shoot, this);
 
             this.platforms = game.add.physicsGroup();
+
             this.ground = this.platforms.create(0, game.world.height - 50, 'ground');
             this.ground.width = game.world.width;
 
             this.platforms.setAll('body.allowGravity', false);
             this.platforms.setAll('body.immovable', true);
 
-            this.hero = game.add.sprite(heroPos[0], heroPos[1], 'hero');
-            this.hero.scale.setTo(heroScale, heroScale);
-            game.physics.arcade.enable(this.hero);
-            this.hero.body.collideWorldBounds = true;
-
-            this.hero.animations.add('run', [12, 13, 14, 15, 16, 17], 6.5, true, true);
-            this.hero.animations.add('run-slow', [12, 13, 14, 15, 16, 17], 5, true, true);
-            this.hero.animations.add('run-fast', [12, 13, 14, 15, 16, 17], 10, true, true);
+            this.hero.create();
+            this.asteroids.create();
 
             this.music = game.add.audio('playing');
             this.music.loop = true;
             this.music.play();
             this.run();
-
-            this.hero.jump = function () {
-                this.body.velocity.y = -500;
-            };
 
             this.cursors = this.input.keyboard.createCursorKeys();
             game.time.events.loop(Phaser.Timer.SECOND * 2, this.scoreUpdate, this);
@@ -111,15 +105,22 @@
                 enemy.animations.play('run');
             }
             else if (enemyType == 2) {
-                enemy = game.add.sprite(1175, 435, 'dog');
-                enemy.scale.setTo(0.3, 0.3);
-                enemy.animations.add('run', [0, 1, 2, 3], 4, true, true);
-                enemy.animations.play('run');
+                enemy = game.add.sprite(1175, 435, 'mummy');
+                enemy.animations.add('run');
+                enemy.scale.x = -1; // flip horizontally
+                enemy.animations.play('run', 20, true);
             }
             else {
-                enemy = game.add.sprite(1175, 420, 'robot');
-                enemy.animations.add('run', [0, 1, 2, 3, 4], 8, true, true);
-                enemy.animations.play('run', 44, true);
+                //enemy = game.add.sprite(1175, 420, 'robot');
+                //enemy.animations.add('run', [0, 1, 2, 3, 4], 8, true, true);
+                //enemy.animations.play('run', 44, true);
+
+                enemy = game.add.sprite(1175, 410, 'ufo');
+                this.physics.arcade.enable(enemy);
+                enemy.body.allowGravity = false;
+                enemy.animations.add('fly');
+                enemy.animations.play('fly');
+
             }
             game.physics.arcade.enable(enemy);
 
@@ -148,16 +149,17 @@
         },
         update: function () {
             // hold the hero and the enemies
-            this.physics.arcade.collide(this.hero, this.platforms, null, null, this);
+            this.physics.arcade.collide(this.hero.object, this.platforms, null, null, this);
             this.physics.arcade.collide(this.enimies, this.platforms, null, null, this);
-            this.physics.arcade.collide(this.enimies, this.hero, this.deathHandler, null, this);
+            this.physics.arcade.collide(this.asteroids.group, this.platforms, null, null, this);
 
-            this.physics.arcade.collide(this.coin, this.hero, this.removeCoin, null, this);
+            this.physics.arcade.collide(this.enimies, this.hero.object, this.deathHandler, null, this);
+            this.physics.arcade.collide(this.coin, this.hero.object, this.removeCoin, null, this);
+
             this.physics.arcade.collide(this.fire, this.enimies, this.removeEnemy, null, this);
-            // only if the hero is on top of the group
-            var onTheGround = (this.hero.bottom === this.ground.top);
 
-            if (this.cursors.up.isDown && onTheGround) {
+            // only if the hero is on top of the group
+            if (this.cursors.up.isDown && this.hero.isOnGround(this.ground)) {
                 this.hero.jump();
             }
 
@@ -181,19 +183,20 @@
 
         },
         run: function (speed) {
+
+            // do the running animation based on the speed
+            this.hero.run(speed);
+
             var magnitude = 500;
             var delta = 300;
 
             if (speed === 'fast') {
                 magnitude += delta;
-                this.hero.animations.play('run-fast');
                 this.enimies.setAll('body.velocity.x', -700);
             } else if (speed === 'slow') {
                 magnitude -= delta;
-                this.hero.animations.play('run-slow');
                 this.enimies.setAll('body.velocity.x', -300);
             } else {
-                this.hero.animations.play('run');
                 if (this.enimies) {
                     this.enimies.setAll('body.velocity.x', -400);
                 }
