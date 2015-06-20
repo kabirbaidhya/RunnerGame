@@ -46,10 +46,7 @@
             this.currentScore.anchor.setTo(0.5, 0.5);
             this.currentLevel.anchor.setTo(0.5, 0.5);
 
-            this.run();
-
             this.bg.scale.setTo(bgRatio, bgRatio);
-
 
             this.platforms = game.add.physicsGroup();
 
@@ -66,8 +63,15 @@
             this.hero.body.collideWorldBounds = true;
             //this.hero.body.allowGravity = false;
 
-            this.hero.animations.add('run', [12, 13, 14, 15, 16, 17], 8, true, true);
-            this.hero.animations.play('run');
+
+            this.hero.animations.add('run', [12, 13, 14, 15, 16, 17], 7, true, true);
+            this.hero.animations.add('run-slow', [12, 13, 14, 15, 16, 17], 5, true, true);
+            this.hero.animations.add('run-fast', [12, 13, 14, 15, 16, 17], 9, true, true);
+
+            //this.hero.animations.play('run');
+
+            this.run();
+
             this.hero.jump = function () {
                 this.body.velocity.y = -500;
             };
@@ -87,9 +91,8 @@
             var enemy;
             if (enemyType == 1) {
                 enemy = game.add.sprite(1175, 495, 'dog');
-                enemy.animations.add('run', [1, 2, 9, 10, 17, 18], 6, true, true);
+                enemy.animations.add('run', [1, 2, 9, 10, 17, 18], 8, true, true);
                 enemy.animations.play('run');
-
             }
             /*    else if(enemyType == 2)
              {
@@ -102,9 +105,8 @@
              }*/
             else {
                 enemy = game.add.sprite(1175, 420, 'robot');
-                enemy.animations.add('run', [0, 1, 2, 3, 4], 5, true, true);
+                enemy.animations.add('run', [0, 1, 2, 3, 4], 8, true, true);
                 enemy.animations.play('run', 44, true);
-
             }
             game.physics.arcade.enable(enemy);
 
@@ -152,8 +154,17 @@
 
             if (speed === 'fast') {
                 magnitude += delta;
+                this.hero.animations.play('run-fast');
+                this.enimies.setAll('body.velocity.x', -500);
             } else if (speed === 'slow') {
                 magnitude -= delta;
+                this.hero.animations.play('run-slow');
+                this.enimies.setAll('body.velocity.x', -100);
+            } else {
+                this.hero.animations.play('run');
+                if (this.enimies) {
+                    this.enimies.setAll('body.velocity.x', -200);
+                }
             }
 
             this.bg.autoScroll(-magnitude, 0);
