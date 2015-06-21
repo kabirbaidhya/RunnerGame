@@ -13,7 +13,7 @@
             //game.load.spritesheet('skeleton', 'assets/enemy1.png', 305, 460, 8);
             game.load.spritesheet('robot', 'assets/enemy2.png', 85.6, 128, 5);
             game.load.spritesheet('dog', 'assets/enemy3.png', 100, 58, 24);
-            game.load.image('coin', 'assets/coin.png');
+            game.load.image('coin', 'assets/diamond.png');
             game.load.image('ufo', 'assets/ufo.png');
             game.load.spritesheet('fire', 'assets/fire.png', 55, 55, 16);
             game.load.spritesheet('mummy', 'assets/metalslug_mummy.png', 37, 45, 18);
@@ -88,7 +88,7 @@
         },
         makeCoin: function () {
             this.coin = game.add.sprite(1175, game.rnd.integerInRange(game.world.height / 2 + 60, game.world.height - 80), 'coin');
-            this.coin.scale.setTo(0.2, 0.2);
+            //this.coin.scale.setTo(0.2, 0.2);
             game.physics.arcade.enable(this.coin);
             this.points.add(this.coin);
             this.coin.body.velocity.x = -200;
@@ -120,7 +120,7 @@
                 enemy = game.add.sprite(game.world.width, ufoHeights[i], 'ufo');
                 this.physics.arcade.enable(enemy);
                 enemy.body.allowGravity = false;
-                console.log(enemy.angle);
+                //console.log(enemy.angle);
                 enemy.animations.add('fly');
                 enemy.animations.play('fly');
                 game.time.events.loop(Phaser.Timer.SECOND * 0.15, this.tiltUfo, this).timer.start();
