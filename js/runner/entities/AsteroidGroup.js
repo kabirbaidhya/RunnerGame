@@ -13,13 +13,13 @@
 
             // starting position of the asteroid
             var pos = {
-                x: rnd.integerInRange(0, game.world.width - 64),
+                x: game.world.randomX,
                 y: -100
             };
 
             var sprite = rnd.integerInRange(1, 16);
             var asteroid = this.group.create(pos.x, pos.y, 'asteroids', sprite);
-            var scaleFactor = rnd.integerInRange(5, 10) * 0.1;
+            var scaleFactor = rnd.integerInRange(7, 10) * 0.1;
 
             asteroid.scale.setTo(scaleFactor, scaleFactor);
             // direction of asteroid
@@ -29,7 +29,7 @@
             }
 
             // horizontal velocity of the asteroid
-            asteroid.body.velocity.x = dx * rnd.integerInRange(1, 9) * 100;
+            asteroid.body.velocity.x = dx * this.SPEED_X;
 
             asteroid.collideWorldBounds = true;
             // just to make the collisions look closer
@@ -69,5 +69,18 @@
         this.addCollider = function (object) {
             colliders.push(object);
         };
+
+        this.changeSpeed = function (delta) {
+            var magnitude = this.SPEED_X;
+
+            this.group.forEachAlive(function (asteroid) {
+                var dx = (asteroid.body.velocity.x < 0) ? -1 : 1;
+
+                asteroid.body.velocity.x = dx * magnitude + delta;
+                //console.log('changed speed to ', asteroid.body.velocity.x);
+            });
+        };
     };
+
+    runner.entities.AsteroidGroup.prototype.SPEED_X = 700;
 })();

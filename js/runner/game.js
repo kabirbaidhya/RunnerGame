@@ -4,9 +4,4 @@
         runner.config.containerDimension[0],
         runner.config.containerDimension[1]
     );
-
-    runner.entities = {};
-
-    runner.level = 1;
-    runner.score = 0;
 })();

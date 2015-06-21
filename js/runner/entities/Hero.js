@@ -37,8 +37,9 @@
             return this.object.bottom === ground.top;
         };
         this.jump = function () {
-            this.object.body.velocity.y = -500;
+            this.object.body.velocity.y = -this.JUMP_SPEED;
         };
-
     };
+
+    runner.entities.Hero.prototype.JUMP_SPEED = 300;
 })();

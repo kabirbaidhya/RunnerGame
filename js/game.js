@@ -9,4 +9,8 @@
         this.game.state.add("gameOverState", this.state.gameOver);
         this.game.state.start('homestate');
     };
+
+    runner.entities = {};
+    runner.level = 1;
+    runner.score = 0;
 })();

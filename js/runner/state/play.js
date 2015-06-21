@@ -29,7 +29,7 @@
             this.game.renderer.renderSession.roundPixels = true;
             game.physics.startSystem(Phaser.Physics.ARCADE);
             this.physics.arcade.skipQuadTree = false;
-            this.physics.arcade.gravity.y = 1000;
+            this.physics.arcade.gravity.y = 400;
             this.bg = game.add.tileSprite(0, 0, imageDim[0], imageDim[1], 'bg');
 
             // Level text display
@@ -115,8 +115,9 @@
                 enemy.animations.play('run', 20, true);
             }
             else {
-
-                enemy = game.add.sprite(game.world.width, 412, 'ufo');
+                var ufoHeights = [390, 412, 460];
+                var i = game.rnd.integerInRange(0, 2);
+                enemy = game.add.sprite(game.world.width, ufoHeights[i], 'ufo');
                 this.physics.arcade.enable(enemy);
                 enemy.body.allowGravity = false;
                 console.log(enemy.angle);
@@ -208,13 +209,19 @@
             if (speed === 'fast') {
                 magnitude += delta;
                 this.enimies.setAll('body.velocity.x', -700);
+
+                this.asteroids.changeSpeed(-delta);
             } else if (speed === 'slow') {
                 magnitude -= delta;
                 this.enimies.setAll('body.velocity.x', -300);
+
+                this.asteroids.changeSpeed(delta);
             } else {
                 if (this.enimies) {
                     this.enimies.setAll('body.velocity.x', -400);
                 }
+
+                this.asteroids.changeSpeed(0);
             }
 
             this.bg.autoScroll(-magnitude, 0);
