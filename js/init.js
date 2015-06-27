@@ -1,3 +1,4 @@
-;(function () {
-	runner.play();
+;
+(function () {
+    runner.homeScreen();
 })();

@@ -30,7 +30,7 @@
             mainMenuButton.inputEnabled = true;
             mainMenuButton.events.onInputDown.add(function () {
                 music.stop();
-                game.state.start('homestate');
+                runner.homeScreen();
             }, this);
 
         },

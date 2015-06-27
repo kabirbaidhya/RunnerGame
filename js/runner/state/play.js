@@ -10,12 +10,10 @@
         preload: function () {
             game.load.image('bg', 'assets/background.jpg');
 
-            //game.load.spritesheet('skeleton', 'assets/enemy1.png', 305, 460, 8);
             game.load.spritesheet('robot', 'assets/enemy2.png', 85.6, 128, 5);
             game.load.spritesheet('dog', 'assets/enemy3.png', 100, 58, 24);
             game.load.image('coin', 'assets/diamond.png');
             game.load.image('ufo', 'assets/ufo.png');
-            game.load.spritesheet('fire', 'assets/fire.png', 55, 55, 16);
             game.load.spritesheet('mummy', 'assets/metalslug_mummy.png', 37, 45, 18);
 
             this.hero = new Hero();
@@ -32,30 +30,18 @@
             this.physics.arcade.gravity.y = 400;
             this.bg = game.add.tileSprite(0, 0, imageDim[0], imageDim[1], 'bg');
 
-            // Level text display
-            var levelText = game.add.text(900, 35, 'Level:', {
-                fill: '#fff'
-            });
-
             // Score text display
             var scoreText = game.add.text(1050, 35, 'Score:', {
                 fill: '#fff'
             });
-            levelText.anchor.setTo(0.5, 0.5);
             scoreText.anchor.setTo(0.5, 0.5);
             this.currentScore = game.add.text(1111, 37, runner.score.toString(), {
                 fill: '#fff'
             });
-            this.currentLevel = game.add.text(961, 37, runner.level.toString(), {
-                fill: '#fff'
-            });
 
             this.currentScore.anchor.setTo(0.5, 0.5);
-            this.currentLevel.anchor.setTo(0.5, 0.5);
 
             this.bg.scale.setTo(bgRatio, bgRatio);
-            var space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-            space.onDown.add(this.shoot, this);
 
             this.platforms = game.add.physicsGroup();
 
@@ -75,7 +61,7 @@
             this.run();
 
             this.cursors = this.input.keyboard.createCursorKeys();
-            game.time.events.loop(Phaser.Timer.SECOND * 2, this.scoreUpdate, this);
+            game.time.events.loop(Phaser.Timer.SECOND * 1, this.scoreUpdate, this);
             this.makeCoins();
             this.makeEnemies();
 
@@ -130,9 +116,7 @@
 
             this.enimies.add(enemy);
 
-            //this.enimies.add(enemy);
             enemy.body.velocity.x = -400;
-            //this.enimies.setAll('body.velocity.x',-200);
         },
         tiltUfo: function () {
             this.enimies.forEach(function (enemy) {
@@ -141,21 +125,11 @@
                     enemy.angle = (enemy.angle == delta ? -delta : delta);
                 }
             });
-            //console.log('tilt', this.enimies);
-        },
-        shoot: function () {
-            this.fire = game.add.sprite(300, 420, 'fire');
-            this.fire.animations.add('run');
-            this.fire.animations.play('run');
-            game.physics.arcade.enable(this.fire);
-            this.fire.body.velocity.x = 300;
-            this.fire.allowGravity = false;
         },
         scoreUpdate: function () {
-            runner.score += 5 * runner.level;
-            if (runner.score > 200) {
+            runner.score += 1 * runner.level;
+            if (runner.score % 200 === 0) {
                 runner.level += 1;
-                this.currentLevel.setText(runner.level.toString());
             }
             this.currentScore.setText(runner.score.toString());
         },
@@ -168,7 +142,6 @@
             //this.physics.arcade.collide(this.asteroids.group, this.platforms, null, null, this);
             this.physics.arcade.collide(this.enimies, this.hero.object, this.deathHandler, null, this);
             this.physics.arcade.collide(this.coin, this.hero.object, this.removeCoin, null, this);
-            this.physics.arcade.collide(this.fire, this.enimies, this.removeEnemy, null, this);
             this.asteroids.setPhysics(this.physics);
             this.asteroids.checkCollision();
 
@@ -188,15 +161,10 @@
             }
 
         },
-        removeEnemy: function () {
-            this.enimies.destroy();
-            this.fire.destroy();
-        },
         removeCoin: function () {
             this.coin.destroy();
             runner.score += 20;
             this.scoreUpdate();
-
         },
         run: function (speed) {
 
@@ -228,7 +196,7 @@
         },
         deathHandler: function () {
             this.music.stop();
-            game.state.start('gameOverState');
+            runner.gameOverScreen();
         }
     };
 })();
