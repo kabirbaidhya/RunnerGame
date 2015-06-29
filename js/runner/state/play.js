@@ -9,7 +9,6 @@
     runner.state.play = {
         preload: function () {
             game.load.image('bg', 'assets/background.jpg');
-
             game.load.spritesheet('robot', 'assets/enemy2.png', 85.6, 128, 5);
             game.load.spritesheet('dog', 'assets/enemy3.png', 100, 58, 24);
             game.load.image('coin', 'assets/diamond.png');
@@ -62,23 +61,29 @@
 
             this.cursors = this.input.keyboard.createCursorKeys();
             game.time.events.loop(Phaser.Timer.SECOND * 1, this.scoreUpdate, this);
+
+            this.coins = this.add.physicsGroup();
+            this.coins.setAll('body.allowGravity', false);
+
             this.makeCoins();
             this.makeEnemies();
 
             this.asteroids.startFalling();
         },
         makeCoins: function () {
-            this.coinGenerator = game.time.events.loop(Phaser.Timer.SECOND * game.rnd.integerInRange(3, 8), this.makeCoin, this);
+            this.coinGenerator = game.time.events.loop(Phaser.Timer.SECOND * game.rnd.integerInRange(2, 8), this.makeCoin, this);
             this.coinGenerator.timer.start();
             this.points = game.add.group();
         },
         makeCoin: function () {
-            this.coin = game.add.sprite(1175, game.rnd.integerInRange(game.world.height / 2 + 60, game.world.height - 80), 'coin');
-            //this.coin.scale.setTo(0.2, 0.2);
-            game.physics.arcade.enable(this.coin);
-            this.points.add(this.coin);
-            this.coin.body.velocity.x = -200;
-            this.coin.body.allowGravity = false;
+            var coin = game.add.sprite(1175, game.rnd.integerInRange(game.world.height / 2 + 60, game.world.height - 80), 'coin');
+
+            game.physics.arcade.enable(coin);
+            this.points.add(coin);
+            coin.body.velocity.x = -200;
+            coin.body.allowGravity = false;
+
+            // console.log('make coin');
         },
         makeEnemies: function () {
             this.enemiesGenerator = game.time.events.loop(Phaser.Timer.SECOND * 2, this.makeEnemy, this);
@@ -88,6 +93,7 @@
         makeEnemy: function () {
             var enemyType = game.rnd.integerInRange(1, 3);
             var enemy;
+
             if (enemyType == 1) {
                 enemy = game.add.sprite(game.world.width, 495, 'dog');
                 enemy.animations.add('run', [1, 2, 9, 10, 17, 18], 8, true, true);
@@ -106,16 +112,13 @@
                 enemy = game.add.sprite(game.world.width, ufoHeights[i], 'ufo');
                 this.physics.arcade.enable(enemy);
                 enemy.body.allowGravity = false;
-                //console.log(enemy.angle);
+
                 enemy.animations.add('fly');
                 enemy.animations.play('fly');
                 game.time.events.loop(Phaser.Timer.SECOND * 0.15, this.tiltUfo, this).timer.start();
-
             }
             game.physics.arcade.enable(enemy);
-
             this.enimies.add(enemy);
-
             enemy.body.velocity.x = -400;
         },
         tiltUfo: function () {
@@ -141,7 +144,7 @@
 
             //this.physics.arcade.collide(this.asteroids.group, this.platforms, null, null, this);
             this.physics.arcade.collide(this.enimies, this.hero.object, this.deathHandler, null, this);
-            this.physics.arcade.collide(this.coin, this.hero.object, this.removeCoin, null, this);
+
             this.asteroids.setPhysics(this.physics);
             this.asteroids.checkCollision();
 
@@ -159,10 +162,10 @@
             } else {
                 this.run('normal');
             }
-
         },
-        removeCoin: function () {
-            this.coin.destroy();
+        consumeCoin: function (fff, fffg) {
+            console.log('consume', fff, fffg);
+            coin.destroy();
             runner.score += 20;
             this.scoreUpdate();
         },
@@ -188,7 +191,6 @@
                 if (this.enimies) {
                     this.enimies.setAll('body.velocity.x', -400);
                 }
-
                 this.asteroids.changeSpeed(0);
             }
 
