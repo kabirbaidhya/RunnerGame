@@ -4,14 +4,17 @@
 
     runner.state.gameOver = {
         preload: function () {
+            game.load.image('bg', 'assets/score.jpg');
             game.load.audio('gameover', ['assets/winner.mp3', 'assets/winner.ogg']);
         },
         create: function () {
-            var gameOverText = game.add.text(game.world.centerX, game.world.centerY, 'Game Over', {
+            this.bg = game.add.sprite(0, 0, 'bg');
+            this.bg.scale.setTo(4, 4);
+            var gameOverText = game.add.text(game.world.centerX + 20, game.world.centerY, 'Game Over', {
                 fill: '#fff'
             });
             gameOverText.anchor.setTo(0.5, 0.5);
-            var mainMenuButton = game.add.text(game.world.centerX, game.world.centerY + 160, 'Main Menu', {
+            var mainMenuButton = game.add.text(game.world.centerX + 20, game.world.centerY + 160, 'Main Menu', {
                 fill: '#fff'
             });
             mainMenuButton.anchor.setTo(0.5, 0.5);

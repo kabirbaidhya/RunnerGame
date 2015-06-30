@@ -62,8 +62,8 @@
             this.cursors = this.input.keyboard.createCursorKeys();
             game.time.events.loop(Phaser.Timer.SECOND * 1, this.scoreUpdate, this);
 
-            this.coins = this.add.physicsGroup();
-            this.coins.setAll('body.allowGravity', false);
+            //this.coins = this.add.physicsGroup();
+            //this.coins.setAll('body.allowGravity', false);
 
             this.makeCoins();
             this.makeEnemies();
@@ -86,7 +86,7 @@
             // console.log('make coin');
         },
         makeEnemies: function () {
-            this.enemiesGenerator = game.time.events.loop(Phaser.Timer.SECOND * 2, this.makeEnemy, this);
+            this.enemiesGenerator = game.time.events.loop(Phaser.Timer.SECOND * 2.5, this.makeEnemy, this);
             this.enemiesGenerator.timer.start();
             this.enimies = game.add.group();
         },
@@ -141,7 +141,7 @@
             this.physics.arcade.collide(this.hero.object, this.platforms, null, null, this);
             this.physics.arcade.collide(this.hero.object, this.asteroids.group, this.deathHandler, null, this);
             this.physics.arcade.collide(this.enimies, this.platforms, null, null, this);
-
+            this.physics.arcade.collide(this.hero.object, this.points, this.consumeCoin, null, this);
             //this.physics.arcade.collide(this.asteroids.group, this.platforms, null, null, this);
             this.physics.arcade.collide(this.enimies, this.hero.object, this.deathHandler, null, this);
 
@@ -152,7 +152,6 @@
             if (this.cursors.up.isDown && this.hero.isOnGround(this.ground)) {
                 this.hero.jump();
             }
-
             if (this.cursors.left.isDown) {
                 this.run('slow');
             } else if (this.cursors.right.isDown) {
@@ -163,8 +162,9 @@
                 this.run('normal');
             }
         },
-        consumeCoin: function (fff, fffg) {
-            console.log('consume', fff, fffg);
+        consumeCoin: function (hero, coin) {
+           //console.log('consume', fff, fffg);
+            hero.body.velocity.x = 0;
             coin.destroy();
             runner.score += 20;
             this.scoreUpdate();
@@ -180,16 +180,17 @@
             if (speed === 'fast') {
                 magnitude += delta;
                 this.enimies.setAll('body.velocity.x', -700);
-
+                this.points.setAll('body.velocity.x', -700);
                 this.asteroids.changeSpeed(-delta);
             } else if (speed === 'slow') {
                 magnitude -= delta;
                 this.enimies.setAll('body.velocity.x', -300);
-
+                this.points.setAll('body.velocity.x', -300);
                 this.asteroids.changeSpeed(delta);
             } else {
                 if (this.enimies) {
                     this.enimies.setAll('body.velocity.x', -400);
+                    this.points.setAll('body.velocity.x', -400);
                 }
                 this.asteroids.changeSpeed(0);
             }
