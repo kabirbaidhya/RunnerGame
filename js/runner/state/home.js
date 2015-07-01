@@ -15,11 +15,13 @@
             this.bg = game.add.tileSprite(0, 0, imageDim[0], imageDim[1], 'bg');
             game.add.sprite(game.world.width / 5, game.world.height / 4, 'name');
 
-            var playButton = game.add.text(game.world.centerX, game.world.centerY, 'Play', {
-                fill: '#fff'
+            var playButton = game.add.text(game.world.centerX, game.world.centerY, 'Play ', {
+                fill: '#fff',
+                font: '28pt Arial',
+                fontWeight: 'bold'
             });
+            playButton.setShadow(0, 0, 'rgba(0, 0, 0, .9)', 3);
             playButton.anchor.setTo(0.5, 0.5);
-
             playButton.inputEnabled = true;
             playButton.events.onInputDown.add(function () {
                 runner.playScreen();
