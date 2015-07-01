@@ -4,33 +4,31 @@
 
     runner.state.gameOver = {
         preload: function () {
-            game.load.image('bg', 'assets/score.jpg');
-            game.load.audio('gameover', ['assets/winner.mp3', 'assets/winner.ogg']);
+
         },
         create: function () {
-            this.bg = game.add.sprite(0, 0, 'bg');
-            this.bg.scale.setTo(4, 4);
-            var gameOverText = game.add.text(game.world.centerX + 20, game.world.centerY, 'Game Over', {
-                fill: '#fff'
+
+            var gameOverText = game.add.text(game.world.centerX, 0.5 * game.world.centerY, 'Game Over', {
+                fill: '#edc53f',
+                font: 'bold 55px Arial'
             });
             gameOverText.anchor.setTo(0.5, 0.5);
-            var mainMenuButton = game.add.text(game.world.centerX + 20, game.world.centerY + 160, 'Main Menu', {
+
+            var mainMenuButton = game.add.text(game.world.centerX, game.world.centerY + 160, 'Main Menu', {
                 fill: '#fff'
             });
             mainMenuButton.anchor.setTo(0.5, 0.5);
-            var yourScoreText = game.add.text(game.world.centerX, game.world.centerY - 60, 'Your Score:', {
+
+            var yourScoreText = game.add.text(game.world.centerX, game.world.centerY, 'Your Score: ' + runner.score.toString(), {
                 fill: '#fff'
             });
             yourScoreText.anchor.setTo(0.5, 0.5);
-            var yourScore = game.add.text(game.world.centerX + 100, game.world.centerY - 60, runner.score.toString(), {
-                fill: '#fff'
-            });
-            yourScore.anchor.setTo(0.5, 0.5);
 
             var music = game.add.audio('gameover');
-            music.loop = true;
+            music.loop = false;
             music.play();
             mainMenuButton.inputEnabled = true;
+            mainMenuButton.input.useHandCursor = true;
             mainMenuButton.events.onInputDown.add(function () {
                 music.stop();
                 runner.homeScreen();

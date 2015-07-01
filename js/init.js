@@ -1,4 +1,5 @@
 ;
 (function () {
-    runner.homeScreen();
+    runner.addStates();
+    runner.loadingScreen();
 })();

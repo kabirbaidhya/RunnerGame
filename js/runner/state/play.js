@@ -8,19 +8,19 @@
 
     runner.state.play = {
         preload: function () {
-            game.load.image('bg', 'assets/background.jpg');
-            game.load.spritesheet('robot', 'assets/enemy2.png', 85.6, 128, 5);
-            game.load.spritesheet('dog', 'assets/enemy3.png', 100, 58, 24);
-            game.load.image('coin', 'assets/diamond.png');
-            game.load.image('ufo', 'assets/ufo.png');
-            game.load.spritesheet('mummy', 'assets/metalslug_mummy.png', 37, 45, 18);
+            //game.load.image('bg', 'assets/background.jpg');
+            //game.load.spritesheet('robot', 'assets/enemy2.png', 85.6, 128, 5);
+            //game.load.spritesheet('dog', 'assets/enemy3.png', 100, 58, 24);
+            //game.load.image('coin', 'assets/diamond.png');
+            //game.load.image('ufo', 'assets/ufo.png');
+            //game.load.spritesheet('mummy', 'assets/metalslug_mummy.png', 37, 45, 18);
 
             this.hero = new Hero();
             this.asteroids = new AsteroidGroup();
 
             //  Firefox doesn't support mp3 files, so use ogg
-            game.load.audio('playing', ['assets/play.mp3', 'assets/play.ogg']);
-            game.load.image('ground', 'assets/transplatform.png');
+            //game.load.audio('playing', ['assets/play.mp3', 'assets/play.ogg']);
+            //game.load.image('ground', 'assets/transplatform.png');
         },
         create: function () {
             this.game.renderer.renderSession.roundPixels = true;
